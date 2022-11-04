@@ -80,6 +80,7 @@ function updatePage() {
             if (room.started) {
                 $('#input').prop('disabled', false);    
                 $('#form button').prop('disabled', false);
+                $('#input').attr('placeholder', 'enter your prompt!');
             }else{
                 $('#input').attr('placeholder', 'waiting for more players...');
             }
@@ -87,9 +88,9 @@ function updatePage() {
             $('#input').prop('disabled', true);    
             $('#form button').prop('disabled', true);
             if(room.prompting){
-                $('#input').attr('placeholder', 'generating the image');
+                $('#input').attr('placeholder', 'generating the image...');
             }else{
-                $('#input').attr('placeholder', 'waiting for the rest of the prompts');
+                $('#input').attr('placeholder', 'waiting for the rest of the prompts...');
             }
         }
     }else{

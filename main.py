@@ -211,9 +211,9 @@ def run_room(room):
     room['full'] = nm
     room['updated'] = datetime.now()
     # save a json file with the room data
-    with open('rooms/' + room['id'] + '.json', 'w') as f:
-        # json.dump(room, f)
-        json.dumps(room, f, cls=DateTimeEncoder)
+    # with open('rooms/' + room['id'] + '.json', 'w') as f:
+    #     # json.dump(room, f)
+    #     json.dumps(room, f, cls=DateTimeEncoder)
     return
 
 

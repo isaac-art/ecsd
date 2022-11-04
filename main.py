@@ -70,6 +70,7 @@ def join(pid):
         'prompting': False,
         'finished': False,
         'full': '',
+        'render': '',
         'created': datetime.now(),
         'updated': datetime.now()
     }
@@ -215,7 +216,7 @@ def run_room(room):
     full_prompt = room['prompts'][0]['text'] + room['prompts'][1]['text'] + room['prompts'][2]['text'] + room['prompts'][3]['text']
     rerender_path = generate_image(prompt=full_prompt, init_image=full, is_rerender=True)
     print("IMAGE RENDERED", rerender_path)
-    room['full'] = rerender_path
+    room['render'] = rerender_path
     room['updated'] = datetime.now()
     # save a json file with the room data
     # with open('rooms/' + room['id'] + '.json', 'w') as f:

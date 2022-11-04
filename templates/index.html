@@ -91,6 +91,7 @@ function updatePage() {
                 $('#input').attr('placeholder', 'generating the image...');
                 // add text to imagebox area saying "generating the image..."
                 var srring = "generating the image...";
+                $('#imagebox-container').toggle(true);
                 $('#imagebox').text(srring);
             }else{
                 $('#input').attr('placeholder', 'waiting for the rest of the prompts...');
@@ -100,11 +101,12 @@ function updatePage() {
         // room.full is the src of the image to show
         $('#imagebox-container').toggle(true);
         // if room fill already starts with images/ then dont add it
-        if (room.full.startsWith('images/')){
-            $('#imagebox').html('<img src="' + room.full + '" alt="image" style="width:100%">');
-        }else{
-            $('#imagebox').html('<img src="images/' + room.full + '" width="100%" height="auto"/>');
+        $('#imagebox').html('<img src="images/' + room.full + '" width="100%" height="auto"/>');
+        if(room.render != ''){
+            // add alongside the other image
+            $('#imagebox').append('<img src="' + room.render + '" width="100%" height="auto"/>');
         }
+        
         // add a refresh button under the image to start a new game
         $('#imagebox').append('<button onclick="window.location.reload()">New Game</button>');
     }

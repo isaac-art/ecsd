@@ -101,6 +101,7 @@ def get_rooms():
 @app.get('/mask')
 def mask():
     make_mask()
+    make_full_mask()
     return "ok"
 
 @app.get("/test")
@@ -210,6 +211,11 @@ def run_room(room):
     room['prompting'] = False
     room['full'] = nm
     room['updated'] = datetime.now()
+
+    full_prompt = room['prompts'][0]['text'] + room['prompts'][1]['text'] + room['prompts'][2]['text'] + room['prompts'][3]['text']
+    rerender = generate_image(prompt=full_prompt, init_image=full, is_rerender=True)
+    room['full'] = rerender
+    room['updated'] = datetime.now()
     # save a json file with the room data
     # with open('rooms/' + room['id'] + '.json', 'w') as f:
     #     # json.dump(room, f)
@@ -301,7 +307,7 @@ def generate_image(prompt, init_image=False, is_rerender=False):
             print("rerendering")
             mask_image = Image.open('images/mask_full.png')
             answers = stability_api.generate(
-                prompt="exqusite corpse game, SFW, safe for work, detailed, 4k, sharp, not blurry",
+                prompt=prompt + " SFW, detailed, 4k, sharp, not blurry",
                 steps=50,
                 init_image=init_image,
                 mask_image=mask_image,

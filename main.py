@@ -48,7 +48,7 @@ async def read_root(request: Request):
 def join(pid):
     print('player: ', pid)
     for room in rooms:
-        if len(room['players']) < 4:
+        if len(room['players']) < 4 and room['prompting'] == False and room['finished'] == False:
             player = {'id':pid, 'last_seen': datetime.now()}
             room['players'].append(player)
             room['updated'] = datetime.now()
@@ -213,8 +213,9 @@ def run_room(room):
     room['updated'] = datetime.now()
 
     full_prompt = room['prompts'][0]['text'] + room['prompts'][1]['text'] + room['prompts'][2]['text'] + room['prompts'][3]['text']
-    rerender = generate_image(prompt=full_prompt, init_image=full, is_rerender=True)
-    room['full'] = rerender
+    rerender_path = generate_image(prompt=full_prompt, init_image=full, is_rerender=True)
+    print("IMAGE RENDERED", rerender_path)
+    room['full'] = rerender_path
     room['updated'] = datetime.now()
     # save a json file with the room data
     # with open('rooms/' + room['id'] + '.json', 'w') as f:

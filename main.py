@@ -309,10 +309,10 @@ def generate_image(prompt, init_image=False, is_rerender=False):
             mask_image = Image.open('images/mask_full.png')
             answers = stability_api.generate(
                 prompt=prompt + " SFW, detailed, 4k, sharp, not blurry",
-                steps=50,
+                steps=40,
                 init_image=init_image,
-                mask_image=mask_image,
-                start_schedule=0.2
+                # mask_image=mask_image,
+                start_schedule=0.4
             )
         else:
             mask_image = Image.open('images/mask.png')

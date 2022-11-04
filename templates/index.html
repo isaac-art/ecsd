@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EXQUISITE CORPSE</title>
+    <!-- add static/bootstrap.min.css  -->
+    <link rel="stylesheet" href="static/bootstrap.min.css">
+</head>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<style>
+    
+</style>
+<body>
+<div id="app" class="container">
+    <div class="row">
+        <div class="col-lg-12">
+                
+            <nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <span id="roomID" class="navbar-brand"></span>
+                    <span class="navbar-brand">
+                        <span id="numPlayers"> </span>
+                        /4 Players
+                    </span>
+                </div>
+            </nav>
+            <div id="imagebox-container" class="card text-white bg-primary mb-3" style="display:none">
+                <div id="imagebox" class="card-body"></div>
+            </div>
+        </div>  <!-- end col-lg-12 -->
+    </div> <!-- end row -->
+</div>
+
+<footer id="footer" class="footer container">
+    <div id="form" class="form-group">
+        <form action="">
+            <div class="input-group mb-8">
+                <input class="form-control" id="input" autocomplete="off" disabled/>
+                <button class="btn btn-primary" disabled>Send Prompt</button>
+            </div>
+        </form>
+    </div>
+</footer>
+</body>
+<script>
+const random = (length = 8) => {
+    return Math.random().toString(16).substr(2, length);
+};
+
+var pid = random(8);
+var room = null;
+var hasPrompted = false;
+
+// on page load call /join and get a room
+$.get('/join/' + pid, function(data) {
+    console.log(data);
+    room = data;
+    startLoop();
+    updatePage();
+});
+
+function startLoop(){
+    console.log("refreshing room ", room.id, pid);
+    // refresh room every 3 seconds
+    setInterval(function() {
+        $.get('/room/' + room.id + '/' + pid, function(data) {
+            console.log(data);
+            room = data;
+            updatePage();
+        });
+    }, 3000);
+}
+
+function updatePage() {
+    //print room data to div #app
+    $('#roomID').text(room.id);
+    $('#numPlayers').text(room.players.length);
+    if(!room.finished){
+        if (!hasPrompted){
+            if (room.started) {
+                $('#input').prop('disabled', false);    
+                $('#form button').prop('disabled', false);
+            }else{
+                $('#input').attr('placeholder', 'waiting for more players...');
+            }
+        }else{
+            $('#input').prop('disabled', true);    
+            $('#form button').prop('disabled', true);
+            if(room.prompting){
+                $('#input').attr('placeholder', 'generating the image');
+            }else{
+                $('#input').attr('placeholder', 'waiting for the rest of the prompts');
+            }
+        }
+    }else{
+        // room.full is the src of the image to show
+        $('#imagebox-container').toggle(true);
+        $('#imagebox').html('<img src="images/' + room.full + '" width="100%" height="auto"/>');
+        // add a refresh button under the image to start a new game
+        $('#imagebox').append('<button onclick="window.location.reload()">New Game</button>');
+    }
+
+}
+
+// catch form submit
+$('#form').submit(function(e) {
+    e.preventDefault();
+    console.log("submitting prompt");
+    var prompt = $('#input').val();
+    // ensure is string and not empty
+    if (typeof prompt === 'string' && prompt.length > 0) {
+        $.post('/prompt/'+room.id+'/'+pid, {"prompt":prompt}, function(data) {
+            console.log(data);
+            hasPrompted = true;
+            room = data;
+            updatePage();
+        });
+    }
+});
+
+</script>
+
+</html>

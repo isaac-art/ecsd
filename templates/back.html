@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>EXQUISITE CORPSE</title>
+    </head>
+    <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            padding-bottom: 3rem; 
+            text-align: center;
+        }
+
+        #form { border-top:1px solid white; background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+        #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+        #input:focus { outline: none; }
+        #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+        #navbar{
+            background:black;
+            color:white;
+            border-bottom: 1px solid white;
+        }
+        #images{
+            background: black;
+            width: 100vw;
+            height: 100vh;
+        }
+        #images img{
+            width: 75%;
+            height: auto;
+        }
+    </style>
+<body>
+    <nav id="navbar">
+        <span id="sioRoomID"></span> |
+        <span id="numPlayers"></span>
+    </nav>
+
+    <div id="imagebox">
+
+    </div>
+
+    <form id="form" action="">
+        <input id="input" autocomplete="off" disabled/>
+        <button>Send Prompt</button>
+    </form>
+
+<script>
+
+const random = (length = 8) => {
+    return Math.random().toString(16).substr(2, length);
+};
+
+
+var sid = random(8);
+
+var form = document.getElementById('form');
+var input = document.getElementById('input');
+
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (input.value) {
+        socket.emit('prompt', input.value);
+        input.value = '';
+    }
+});
+
+socket.on('connect', () => {
+    console.log('client connected to websocket server');
+    socket.emit('join', sid);
+});
+
+socket.on('room', function(room) {
+    console.log("joined room " + room.id);
+    updateRoomInfo(room);
+});
+
+socket.on('prompting', function(room) {
+    console.log("is prompting");
+    updateRoomInfo(room);
+});
+
+socket.on('finished', function(room) {
+    console.log("is done");
+    updateRoomInfo(room);
+});
+
+socket.on('player-left', function(room){
+    console.log("player left");
+    updateRoomInfo(room);
+});
+
+function updateRoomInfo(room){
+    console.log(room);
+    document.getElementById('sioRoomID').innerHTML = room.id;
+    document.getElementById('numPlayers').innerHTML = room.players.length + " players";
+
+    if (socket.id == room.started){
+        input.disabled = false;
+        input.focus();
+    } else {
+        input.disabled = true;
+    }
+    if(room.prompting){
+        input.disabled = true;
+        input.placeholder = 'prompting ...';
+    }
+    if(room.finished){
+        // room.full is an image src to append into #imagebox
+        input.disabled = true;
+        input.placeholder = 'finished!';
+        let im = document.createElement('img');
+        im.src = room.full;
+        document.getElementById('imagebox').appendChild(im);
+    }
+}
+
+function refreshImages(){
+}
+
+</script>
+</body>
+</html>

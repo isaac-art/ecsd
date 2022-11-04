@@ -89,6 +89,9 @@ function updatePage() {
             $('#form button').prop('disabled', true);
             if(room.prompting){
                 $('#input').attr('placeholder', 'generating the image...');
+                // add text to imagebox area saying "generating the image..."
+                var srring = "generating the image...";
+                $('#imagebox').text(srring);
             }else{
                 $('#input').attr('placeholder', 'waiting for the rest of the prompts...');
             }

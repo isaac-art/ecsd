@@ -192,17 +192,17 @@ def run_room(room):
     images = []
     for i, prompt in enumerate(room['prompts']):
         if i == 0:
-            p = prompt['text'] + 'head, head only,  exquisite, no blur, clear'
+            p = prompt['text'] #+ 'head, head only,  exquisite, no blur, clear'
             prompt['image'] = generate_image(p)
             prompt['ready'] = True
             img = prompt['image']
         else:
             if i == 1:
-                p = prompt['text'] + 'neck and shoulders, art, neck only, exquisite, no blur, clear', 
+                p = prompt['text'] #+ 'neck and shoulders, art, neck only, exquisite, no blur, clear', 
             elif i == 2:
-                p = prompt['text'] + 'body, torso, middle, art, exquisite, no blur, clear'
+                p = prompt['text'] #+ 'body, torso, middle, art, exquisite, no blur, clear'
             elif i == 3:
-                p = prompt['text'] + 'legs and feet, legs and feet only, art, exquisite, no blur, clear'
+                p = prompt['text'] #+ 'legs and feet, legs and feet only, art, exquisite, no blur, clear'
             init = next_image(images[len(images)-1])
             prompt['image'] = generate_image(p, init_image=init)
             img = prompt['image']
@@ -309,7 +309,7 @@ def generate_image(prompt, init_image=False, is_rerender=False):
             print("rerendering")
             mask_image = Image.open('images/mask_full.png')
             answers = stability_api.generate(
-                prompt=prompt + " SFW, detailed, 4k, sharp, not blurry",
+                prompt=prompt, #+ " SFW, detailed, 4k, sharp, not blurry",
                 steps=50,
                 init_image=init_image,
                 # mask_image=mask_image,

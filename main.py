@@ -340,10 +340,7 @@ def generate_image(prompt, init_image=False, is_rerender=False):
             if artifact.finish_reason == generation.FILTER:
                 print('hit nsfw filter')
             if artifact.type == generation.ARTIFACT_IMAGE:
-                if is_rerender:
-                    path = f'renders/{nm}{ty}'
-                else:
-                    path = os.path.join(dir, f'{nm}{ty}')
+                path = os.path.join(dir, f'{nm}{ty}')
                 im = Image.open(io.BytesIO(artifact.binary))
                 im.save(path)
                 return path

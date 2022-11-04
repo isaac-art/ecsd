@@ -114,7 +114,7 @@ class Prompt(BaseModel):
     rid: str
 
 @app.post('/prompt/{rid}/{pid}')
-def post_prompt(rid, pid, background_tasks: BackgroundTasks, prompt: str = Form()):
+def post_prompt(rid, pid, background_tasks: BackgroundTasks, prompt: str = Form(...)):
     if len(rooms) == 0:
         return "no rooms, refresh"
     print('prompt: ', prompt, ' from player: ', pid, ' in room: ', rid)
